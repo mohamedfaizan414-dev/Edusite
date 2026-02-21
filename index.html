@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduQuest - Main</title>
+  <meta name="description" content="EduQuest - Interactive learning platform for students. Practice, customize, and track your progress!">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="EduQuest - Interactive Learning">
+<meta property="og:description" content="Practice, customize, and track your progress with EduQuest!">
+<meta property="og:image" content="https://img.icons8.com/color/120/open-book--v2.png">
+<link rel="icon" type="image/png" href="https://img.icons8.com/color/48/open-book--v2.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #121212;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 25px;
+      background: #1e1e1e;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #00c6ff;
+      text-shadow: 0 0 10px #00c6ff, 0 0 20px #00c6ff;
+    }
+    .search-box {
+      flex: 1;
+      text-align: center;
+    }
+    .search-box input {
+      width: 60%;
+      padding: 10px 15px;
+      border-radius: 25px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      background: #333;
+      color: #fff;
+    }
+    .right-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .profile, .dashboard {
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .points-display {
+      font-size: 18px;
+      color: #ffd700;
+      margin-left: 30px;
+      font-weight: bold;
+      display: inline-block;
+    }
+    .hero {
+      text-align: center;
+      padding: 80px 20px 50px;
+      background: linear-gradient(135deg, #1a1a1a, #222);
+    }
+    .hero h1 {
+      font-size: 42px;
+      color: #00c6ff;
+      margin-bottom: 15px;
+      text-shadow: 0 0 15px #00c6ff;
+    }
+    .hero p {
+      font-size: 18px;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+    .hero button {
+      background: #00c6ff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .hero button:hover {
+      background: #009acd;
+    }
+    .subjects {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 50px auto;
+      flex-wrap: wrap;
+      max-width: 1000px;
+    }
+    .subject {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-align: center;
+      width: 160px;
+    }
+    .subject:hover {
+      background: #00c6ff;
+      color: #000;
+      transform: scale(1.1);
+    }
+    .subject img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 8px;
+    }
+    .progress-btn {
+      display: block;
+      margin: 30px auto;
+      background: #00c6ff;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+    .progress-btn:hover {
+      background: #009acd;
+    }
+    .customize-btn {
+      display: block;
+      margin: 20px auto;
+      background: #ffd700;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+    .customize-btn:hover {
+      background: #ffb700;
+    }
+    .customize-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 30px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 0 20px #ffd700;
+      z-index: 300;
+    }
+    .custom-btn {
+      background: #ffd700;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      margin: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .custom-btn:hover {
+      background: #ffb700;
+    }
+    .motivation {
+      text-align: center;
+      margin: 60px auto;
+      padding: 40px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      max-width: 900px;
+    }
+    .motivation h2 {
+      color: #00c6ff;
+      margin-bottom: 15px;
+    }
+    .motivation p {
+      color: #ccc;
+      font-size: 18px;
+    }
+    .courses {
+      margin: 60px auto;
+      max-width: 1000px;
+    }
+    .courses h2 {
+      text-align: center;
+      color: #00c6ff;
+      margin-bottom: 30px;
+    }
+    .course-cards {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .course {
+      background: #1e1e1e;
+      padding: 20px;
+      width: 250px;
+      border-radius: 12px;
+      transition: 0.3s;
+      text-align: left;
+    }
+    .course:hover {
+      background: #00c6ff;
+      color: #000;
+      transform: translateY(-5px);
+    }
+    .course h3 {
+      margin-bottom: 10px;
+    }
+    .chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00c6ff;
+      color: #000;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00c6ff;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 30px;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      width: 200px;
+    }
+    .dropdown p {
+      margin: 5px 0;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .dropdown p:hover {
+      color: #00c6ff;
+    }
+    .class-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      z-index: 200;
+    }
+    .class-popup h2 {
+      margin-bottom: 15px;
+      color: #00c6ff;
+    }
+    .class-btn {
+      background: #00c6ff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      margin: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .class-btn:hover {
+      background: #009acd;
+    }
+    .materials {
+      margin: 60px auto;
+      max-width: 1000px;
+    }
+    .material-cards {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .material-card {
+      background: #1e1e1e;
+      padding: 20px;
+      width: 220px;
+      border-radius: 12px;
+      text-align: center;
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      min-height: 370px;
+    }
+    .material-card:hover {
+      background: #00c6ff;
+      color: #000;
+      transform: translateY(-5px);
+    }
+    .material-card img {
+      width: 100%;
+      max-width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 0 12px #00c6ff44;
+    }
+    .material-card h3 {
+      margin-bottom: 8px;
+      color: #ffd700;
+    }
+    .material-card p {
+      color: #ccc;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .material-btn {
+      background: #ffd700;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: auto;
+      margin-bottom: 0;
+      display: block;
+      width: 80%;
+      align-self: center;
+    }
+    .material-btn:hover {
+      background: #ffb700;
+    }
+    #particle-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background: #121212;
+    }
+    .leaderboard-section {
+      margin: 60px auto;
+      max-width: 700px;
+      background: #1e1e1e;
+      border-radius: 16px;
+      box-shadow: 0 0 18px #00c6ff44;
+      padding: 32px 24px;
+    }
+    .leaderboard-section h2 {
+      color: #00c6ff;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: transparent;
+      box-shadow: 0 0 12px #00c6ff22;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .leaderboard-table th, .leaderboard-table td {
+      padding: 14px 8px;
+      text-align: center;
+      font-size: 18px;
+      vertical-align: middle;
+    }
+    .leaderboard-table th {
+      background: #00c6ff;
+      color: #222;
+      font-weight: bold;
+      border-bottom: 2px solid #ffd700;
+    }
+    .leaderboard-table tr {
+      transition: background 0.2s;
+    }
+    .leaderboard-table tr:nth-child(even) {
+      background: #222;
+    }
+    .leaderboard-table tr:nth-child(odd) {
+      background: #181818;
+    }
+    .leaderboard-table td {
+      color: #ffd700;
+      font-weight: bold;
+    }
+    .leaderboard-table td.name {
+      color: #fff;
+      font-weight: 500;
+      text-align: left;
+      padding-left: 12px;
+    }
+    .leaderboard-table td.rank {
+      color: #00c6ff;
+      font-weight: bold;
+    }
+    .leaderboard-table td.character {
+      width: 48px;
+      padding: 0;
+    }
+    .leaderboard-table td.character svg {
+      display: block;
+      margin: 0 auto;
+      width: 38px;
+      height: 38px;
+    }
+    .main-nav {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      background: linear-gradient(90deg, #1e1e1e 60%, #00c6ff 100%);
+      padding: 12px 0;
+      margin-bottom: 0;
+    }
+    .nav-link {
+      color: #fff;
+      font-size: 18px;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 6px 18px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: #00c6ff;
+      color: #222;
+    }
+
+    @media (max-width: 900px) {
+      .subjects, .course-cards, .material-cards, .testimonial-cards {
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+      }
+      .main-nav {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 0;
+      }
+      .leaderboard-section, .courses, .materials, .motivation {
+        max-width: 98vw;
+        padding: 12px;
+      }
+      .customize-popup {
+        width: 95vw;
+        padding: 12px;
+      }
+    }
+    .main-footer {
+      background: #181818;
+      color: #ccc;
+      text-align: center;
+      padding: 28px 10px 18px;
+      font-size: 16px;
+      margin-top: 60px;
+      border-top: 2px solid #00c6ff;
+    }
+    .footer-link {
+      color: #ffd700;
+      text-decoration: none;
+      margin: 0 8px;
+      transition: color 0.3s;
+    }
+    .footer-link:hover {
+      color: #00c6ff;
+    }
+    .testimonials {
+      margin: 60px auto;
+      max-width: 900px;
+    }
+    .testimonial-cards {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .testimonial-card {
+      background: #222;
+      padding: 22px 18px;
+      border-radius: 14px;
+      width: 260px;
+      color: #fff;
+      box-shadow: 0 0 12px #00c6ff33;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+    .testimonial-card span {
+      display: block;
+      margin-top: 12px;
+      color: #ffd700;
+      font-weight: bold;
+      font-style: normal;
+    }
+    #loader {
+      position:fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
+      background:#121212;
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .loader-dot {
+      display:inline-block;
+      width:8px;
+      height:8px;
+      margin:0 4px;
+      border-radius:50%;
+      background:#00c6ff;
+      animation: blink 1s infinite alternate;
+    }
+    .loader-dot:nth-child(2) { animation-delay: 0.3s; }
+    .loader-dot:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes blink {
+      0% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">EduQuest</div>
+    <div class="search-box">
+      <input type="text" placeholder="🔍 Search courses, topics, subjects...">
+    </div>
+    <div class="right-icons">
+      <div class="dashboard">☰ Dashboard</div>
+      <div class="profile" onclick="toggleProfile()">👤 Profile</div>
+    </div>
+    <div class="points-display">⭐ Points: <span id="userPoints">0</span></div>
+  </header>
+
+  <nav class="main-nav">
+    <a href="main.html" class="nav-link active">Home</a>
+    <a href="math.html" class="nav-link">Math</a>
+    <a href="science.html" class="nav-link">Science</a>
+    <a href="history.html" class="nav-link">History</a>
+    <a href="english.html" class="nav-link">English</a>
+    <a href="progress.html" class="nav-link">Progress</a>
+  </nav>
+
+  <div class="dropdown" id="profileMenu"></div>
+
+  <div class="hero">
+    <h1>Your Learning Journey Starts Here 🚀</h1>
+    <p>Learn. Practice. Grow. Unlock your true potential with EduQuest!</p>
+    <button onclick="document.querySelector('.subjects').scrollIntoView({behavior: 'smooth'})">Start Learning</button>
+  </div>
+
+  <div class="subjects">
+    <div class="subject" onclick="window.location.href='math.html'">
+      <img src="https://img.icons8.com/color/96/000000/math.png" alt="Math">
+      Math
+    </div>
+    <div class="subject" onclick="window.location.href='science.html'">
+      <img src="https://img.icons8.com/color/96/000000/microscope.png" alt="Science">
+      Science
+    </div>
+    <div class="subject" onclick="window.location.href='history.html'">
+      <img src="https://img.icons8.com/color/96/000000/scroll.png" alt="History">
+      History
+    </div>
+    <div class="subject" onclick="window.location.href='english.html'">
+      <img src="https://img.icons8.com/color/96/000000/book.png" alt="English">
+      English
+    </div>
+  </div>
+
+  <button class="progress-btn" onclick="window.location.href='progress.html'" aria-label="View Progress">📈 View Progress</button>
+  <button class="customize-btn" onclick="openCustomizePopup()" aria-label="Customize Character">🎨 Customize Character</button>
+  <div class="customize-popup" id="customizePopup">
+    <h2>Customize Your Character</h2>
+    <div id="characterPreview" style="position:relative;width:180px;height:320px;margin:auto;"></div>
+    <div id="customOptions">
+      <button onclick="customize('hat')" class="custom-btn">Add Hat (5 pts)</button>
+      <button onclick="customize('glasses')" class="custom-btn">Add Glasses (5 pts)</button>
+      <button onclick="customize('color')" class="custom-btn">Change Color (10 pts)</button>
+    </div>
+    <h3 style="color:#ffd700;">Wardrobe</h3>
+    <div id="wardrobe">
+      <button onclick="buyDress('dress1')" class="custom-btn">Buy Blue Dress (15 pts)</button>
+      <button onclick="buyDress('dress2')" class="custom-btn">Buy Red Dress (15 pts)</button>
+      <button onclick="buyDress('dress3')" class="custom-btn">Buy Green Dress (15 pts)</button>
+    </div>
+    <h3 style="color:#ffd700;">Shirts</h3>
+    <div id="shirtOptions">
+      <button onclick="buyShirt('blue')" class="custom-btn">Buy Blue Shirt (10 pts)</button>
+      <button onclick="buyShirt('red')" class="custom-btn">Buy Red Shirt (10 pts)</button>
+      <button onclick="buyShirt('green')" class="custom-btn">Buy Green Shirt (10 pts)</button>
+      <button onclick="buyShirt('yellow')" class="custom-btn">Buy Yellow Shirt (10 pts)</button>
+    </div>
+    <button class="custom-btn" onclick="closeCustomizePopup()">Close</button>
+  </div>
+
+  <div class="motivation">
+    <h2>📚 "Education is the passport to the future"</h2>
+    <p>At EduQuest, we bring you world-class learning materials, live doubt solving, and personalized progress tracking to help you succeed in school and beyond.</p>
+  </div>
+
+  <div class="courses">
+    <h2>🔥 Featured Courses</h2>
+    <div class="course-cards">
+      <div class="course">
+        <h3>Algebra Basics</h3>
+        <p>Master equations, inequalities, and polynomials with easy step-by-step lessons.</p>
+      </div>
+      <div class="course">
+        <h3>Physics Made Easy</h3>
+        <p>Understand Newton’s laws, energy, and motion with practical examples.</p>
+      </div>
+      <div class="course">
+        <h3>World History</h3>
+        <p>Explore civilizations, revolutions, and historical turning points.</p>
+      </div>
+      <div class="course">
+        <h3>English Mastery</h3>
+        <p>Improve grammar, vocabulary, and writing skills for school and beyond.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="materials">
+    <h2 style="color:#00c6ff;text-align:center;margin-bottom:20px;">🌟 Featured Materials</h2>
+    <div class="material-cards">
+      <div class="material-card">
+        <img src="https://img.icons8.com/color/120/open-book--v2.png" alt="E-Book">
+        <h3>E-Books</h3>
+        <p>Download curated e-books for every subject and level.</p>
+        <a href="#" class="material-btn">Browse E-Books</a>
+      </div>
+      <div class="material-card">
+        <img src="https://img.icons8.com/color/120/youtube-play.png" alt="Video Lessons">
+        <h3>Video Lessons</h3>
+        <p>Watch expert teachers explain concepts in easy language.</p>
+        <a href="history.html" class="material-btn">Watch Videos</a>
+      </div>
+      <div class="material-card">
+        <img src="https://img.icons8.com/fluency/120/test-passed.png" alt="Practice Tests">
+        <h3>Practice Tests</h3>
+        <p>Take interactive quizzes and track your improvement.</p>
+        <a href="mathsalgebra.html" class="material-btn">Start Practice</a>
+      </div>
+      <div class="material-card">
+        <img src="https://img.icons8.com/fluency/120/brain.png" alt="Mind Games">
+        <h3>Mind Games</h3>
+        <p>Sharpen your skills with fun and challenging games.</p>
+        <a href="mathsalgebra.html" class="material-btn">Play Now</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="leaderboard-section">
+    <h2 style="color:#00c6ff;text-align:center;margin-bottom:20px;">🏆 Leaderboard</h2>
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Character</th>
+          <th>Name</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboardBody">
+        <!-- Leaderboard rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="testimonials">
+    <h2 style="color:#00c6ff;text-align:center;margin-bottom:20px;">💬 What Students Say</h2>
+    <div class="testimonial-cards">
+      <div class="testimonial-card">
+        <p>"EduQuest made learning so much fun! I love the quizzes and games."</p>
+        <span>- Aisha, Grade 8</span>
+      </div>
+      <div class="testimonial-card">
+        <p>"The video lessons helped me understand tough topics easily."</p>
+        <span>- Rahul, Grade 10</span>
+      </div>
+      <div class="testimonial-card">
+        <p>"I improved my scores thanks to the practice tests and instant feedback."</p>
+        <span>- Priya, Grade 9</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="chatbot-popup" style="display:none;position:fixed;bottom:80px;right:30px;width:350px;height:420px;background:#222;border-radius:16px;box-shadow:0 0 20px #00c6ff;z-index:999;">
+    <div style="background:#00c6ff;color:#000;padding:12px 18px;border-radius:16px 16px 0 0;font-weight:bold;">EduQuest Chatbot <span style="float:right;cursor:pointer;" onclick="closeChatbot()">✖</span></div>
+    <div id="chatbot-messages" style="height:300px;overflow-y:auto;padding:12px;"></div>
+    <div style="padding:10px;">
+      <input id="chatbot-input" type="text" placeholder="Ask your question..." style="width:70%;padding:8px;border-radius:8px;border:none;">
+      <button onclick="sendChatbot()" style="background:#00c6ff;color:#000;padding:8px 16px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Send</button>
+    </div>
+  </div>
+  <div class="chatbot-icon" onclick="openChatbot()">💬</div>
+
+  <div class="class-popup" id="classPopup">
+    <h2>Select Your Class</h2>
+    <div id="classOptions"></div>
+    <button class="class-btn" onclick="closePopup()">Close</button>
+  </div>
+  <canvas id="particle-bg"></canvas>
+
+  <footer class="main-footer">
+    <div>
+      <span style="font-weight:bold;color:#ffd700;">EduQuest</span> &copy; 2025. All rights reserved.
+      <span style="margin-left:20px;">Contact: <a href="mailto:support@eduquest.com" style="color:#00c6ff;">support@eduquest.com</a></span>
+    </div>
+    <div style="margin-top:8px;">
+      <a href="#" class="footer-link">Privacy Policy</a> |
+      <a href="#" class="footer-link">Terms of Service</a> |
+      <a href="#" class="footer-link">About</a>
+    </div>
+  </footer>
+
+  <div id="loader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#121212;z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="color:#00c6ff;font-size:32px;font-weight:bold;">
+    <span class="loader-dot">.</span>
+    <span class="loader-dot">.</span>
+    <span class="loader-dot">.</span>
+  </div>
+</div>
+
+  <script>
+    // Profile dropdown
+    function toggleProfile() {
+      const menu = document.getElementById("profileMenu");
+      const user = JSON.parse(localStorage.getItem("eduquestUser")) || {username: "Guest", email: "guest@mail.com"};
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+      if (menu.style.display === "block") {
+        menu.innerHTML = `
+          <p><b>User:</b> ${user.username}</p>
+          <p><b>Email:</b> ${user.email || "Not Set"}</p>
+          <hr>
+          <p onclick="alert('Support Center Coming Soon!')">🔧 Support</p>
+        `;
+      }
+    }
+
+    // Class selection
+    function openClassPopup(subject) {
+      const popup = document.getElementById("classPopup");
+      const options = document.getElementById("classOptions");
+      popup.style.display = "block";
+      options.innerHTML = "";
+      ["Class 6", "Class 7", "Class 8", "Class 9", "Class 10", "Class 11", "Class 12"].forEach(cls => {
+        const btn = document.createElement("button");
+        btn.className = "class-btn";
+        btn.innerText = cls;
+        btn.onclick = () => goToSubject(subject, cls);
+        options.appendChild(btn);
+      });
+    }
+    function closePopup() {
+      document.getElementById("classPopup").style.display = "none";
+    }
+    function goToSubject(subject, cls) {
+      window.location.href = `${subject}.html?class=${cls}`;
+    }
+
+    // Points display
+    window.onload = function() {
+      const user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+      document.getElementById("userPoints").innerText = user.points || 0;
+      showCharacter();
+      renderLeaderboard();
+    };
+
+    function renderLeaderboard() {
+      // Demo data: Replace with backend fetch if needed
+      let leaderboard = [
+        { name: "Aisha", points: 120, shirt: "red", hat: true, glasses: false, color: "#fcd7b6", dress: "dress2" },
+        { name: "Rahul", points: 110, shirt: "green", hat: false, glasses: true, color: "#ffe0b2", dress: "dress3" },
+        { name: "Priya", points: 95, shirt: "yellow", hat: false, glasses: false, color: "#fcd7b6", dress: "dress1" },
+        // Current user
+        JSON.parse(localStorage.getItem("eduquestUser")) || { name: "You", points: 0 }
+      ];
+
+      // Ensure current user has a name
+      if (!leaderboard[3].name) leaderboard[3].name = leaderboard[3].username || "You";
+
+      // Sort by points descending
+      leaderboard.sort((a, b) => b.points - a.points);
+
+      // Render rows
+      const tbody = document.getElementById("leaderboardBody");
+      tbody.innerHTML = "";
+      leaderboard.forEach((entry, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="rank">${idx + 1}</td>
+            <td class="character">${getMiniCharacterSVG(entry)}</td>
+            <td class="name">${entry.name}</td>
+            <td>${entry.points}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Particle background
+    const canvas = document.getElementById("particle-bg");
+    const ctx = canvas.getContext("2d");
+    let particlesArray = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      createParticles();
+    }
+    window.addEventListener("resize", resizeCanvas);
+    function createParticles() {
+      particlesArray = [];
+      for (let i = 0; i < 80; i++) {
+        particlesArray.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2 + 1,
+          dx: (Math.random() - 0.5) * 0.6,
+          dy: (Math.random() - 0.5) * 0.6
+        });
+      }
+    }
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let p of particlesArray) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,198,255,0.7)";
+        ctx.shadowColor = "#00c6ff";
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    resizeCanvas();
+    drawParticles();
+
+    // Character customization
+    function openCustomizePopup() {
+      document.getElementById("customizePopup").style.display = "block";
+      showCharacter();
+    }
+    function closeCustomizePopup() {
+      document.getElementById("customizePopup").style.display = "none";
+    }
+    function showCharacter() {
+      const user = JSON.parse(localStorage.getItem("eduquestUser")) || {};
+      let shirtColor = "#3b5998"; // Default shirt
+      if (user.shirt === "red") shirtColor = "#e91e63";
+      if (user.shirt === "green") shirtColor = "#4caf50";
+      if (user.shirt === "yellow") shirtColor = "#ffd700";
+      if (user.shirt === "blue") shirtColor = "#2196f3";
+
+      let svg = `
+      <svg width="180" height="320" viewBox="0 0 180 320" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="skinGradient" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="${user.color || '#fcd7b6'}" />
+            <stop offset="100%" stop-color="#e2b48c" />
+          </radialGradient>
+          <linearGradient id="shirtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="${shirtColor}" />
+            <stop offset="100%" stop-color="#222" />
+          </linearGradient>
+          <radialGradient id="hairGradient" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#3a2c1a" />
+            <stop offset="100%" stop-color="#1a1208" />
+          </radialGradient>
+        </defs>
+        <!-- Shadow -->
+        <ellipse cx="90" cy="300" rx="38" ry="12" fill="#222" opacity="0.3"/>
+        <!-- Left Arm (behind body) -->
+        <path d="M60 150 Q20 180 60 220" stroke="url(#skinGradient)" stroke-width="18" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <!-- Right Arm (behind body) -->
+        <path d="M120 150 Q160 180 120 220" stroke="url(#skinGradient)" stroke-width="18" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <!-- Hands (behind body) -->
+        <ellipse cx="60" cy="220" rx="10" ry="8" fill="url(#skinGradient)" opacity="0.7"/>
+        <ellipse cx="120" cy="220" rx="10" ry="8" fill="url(#skinGradient)" opacity="0.7"/>
+        <!-- Legs -->
+        <rect x="75" y="210" width="13" height="65" rx="8" fill="#4a3c2a" stroke="#222" stroke-width="2"/>
+        <rect x="92" y="210" width="13" height="65" rx="8" fill="#4a3c2a" stroke="#222" stroke-width="2"/>
+        <!-- Shoes -->
+        <ellipse cx="81" cy="275" rx="10" ry="7" fill="#222"/>
+        <ellipse cx="98" cy="275" rx="10" ry="7" fill="#222"/>
+        <!-- Body (torso/shirt) -->
+        <rect x="60" y="130" width="60" height="80" rx="30" fill="url(#shirtGradient)" stroke="#222" stroke-width="2"/>
+        <!-- Shirt collar and buttons -->
+        <ellipse cx="90" cy="130" rx="18" ry="7" fill="#fff" opacity="0.25"/>
+        <circle cx="90" cy="170" r="3" fill="#fff" opacity="0.5"/>
+        <circle cx="90" cy="185" r="2.5" fill="#fff" opacity="0.5"/>
+        <!-- Dress overlay (if any) -->
+        ${user.dress === "dress1" ? `<rect x="60" y="130" width="60" height="80" rx="30" fill="#2196f3" opacity="0.5"/>` : ""}
+        ${user.dress === "dress2" ? `<rect x="60" y="130" width="60" height="80" rx="30" fill="#e91e63" opacity="0.5"/>` : ""}
+        ${user.dress === "dress3" ? `<rect x="60" y="130" width="60" height="80" rx="30" fill="#4caf50" opacity="0.5"/>` : ""}
+        <!-- Neck -->
+        <rect x="80" y="114" width="20" height="18" rx="8" fill="url(#skinGradient)" />
+        <!-- Head -->
+        <ellipse cx="90" cy="70" rx="38" ry="44" fill="url(#skinGradient)" stroke="#c9a07a" stroke-width="2"/>
+        <!-- Ears -->
+        <ellipse cx="52" cy="80" rx="7" ry="11" fill="url(#skinGradient)" stroke="#c9a07a" stroke-width="1.5"/>
+        <ellipse cx="128" cy="80" rx="7" ry="11" fill="url(#skinGradient)" stroke="#c9a07a" stroke-width="1.5"/>
+        <!-- Hair -->
+        <ellipse cx="90" cy="45" rx="38" ry="22" fill="url(#hairGradient)" />
+        <ellipse cx="90" cy="35" rx="18" ry="10" fill="#2a1a08" opacity="0.7"/>
+        <!-- Face details -->
+        <ellipse cx="75" cy="80" rx="7" ry="9" fill="#222" />
+        <ellipse cx="105" cy="80" rx="7" ry="9" fill="#222" />
+        <ellipse cx="75" cy="80" rx="3" ry="4" fill="#fff" opacity="0.7"/>
+        <ellipse cx="105" cy="80" rx="3" ry="4" fill="#fff" opacity="0.7"/>
+        <path d="M75 100 Q90 120 105 100" stroke="#e07a3f" stroke-width="3" fill="none"/>
+        <!-- Eyebrows -->
+        <rect x="67" y="70" width="16" height="3" rx="2" fill="#7a4a1b" />
+        <rect x="97" y="70" width="16" height="3" rx="2" fill="#7a4a1b" />
+        <!-- Cheek highlights -->
+        <ellipse cx="70" cy="95" rx="7" ry="3" fill="#fff" opacity="0.15"/>
+        <ellipse cx="110" cy="95" rx="7" ry="3" fill="#fff" opacity="0.15"/>
+        <!-- Hat -->
+        ${user.hat ? `
+          <rect x="60" y="30" width="60" height="20" rx="10" fill="#222"/>
+          <rect x="75" y="10" width="30" height="25" rx="8" fill="#444"/>
+        ` : ""}
+        <!-- Glasses -->
+        ${user.glasses ? `
+          <ellipse cx="75" cy="80" rx="13" ry="10" fill="none" stroke="#222" stroke-width="3"/>
+          <ellipse cx="105" cy="80" rx="13" ry="10" fill="none" stroke="#222" stroke-width="3"/>
+          <rect x="88" y="80" width="4" height="3" fill="#222"/>
+        ` : ""}
+        <!-- Foreground arms (on top of shirt) -->
+        <path d="M60 150 Q40 180 60 220" stroke="url(#skinGradient)" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M120 150 Q140 180 120 220" stroke="url(#skinGradient)" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <!-- Foreground hands -->
+        <ellipse cx="60" cy="220" rx="8" ry="6" fill="url(#skinGradient)" />
+        <ellipse cx="120" cy="220" rx="8" ry="6" fill="url(#skinGradient)" />
+        <!-- Animated sparkle (for hackathon effect) -->
+        <circle cx="120" cy="50" r="4" fill="#ffd700">
+          <animate attributeName="r" values="4;8;4" dur="1.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="70" cy="120" r="3" fill="#00c6ff">
+          <animate attributeName="r" values="3;6;3" dur="1s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+      `;
+      document.getElementById("characterPreview").innerHTML = svg;
+    }
+
+    function getMiniCharacterSVG(user) {
+      let shirtColor = "#3b5998";
+      if (user.shirt === "red") shirtColor = "#e91e63";
+      if (user.shirt === "green") shirtColor = "#4caf50";
+      if (user.shirt === "yellow") shirtColor = "#ffd700";
+      if (user.shirt === "blue") shirtColor = "#2196f3";
+      return `
+        <svg width="38" height="38" viewBox="0 0 180 320">
+          <ellipse cx="90" cy="70" rx="18" ry="22" fill="${user.color || '#fcd7b6'}" stroke="#c9a07a" stroke-width="2"/>
+          <rect x="80" y="114" width="20" height="18" rx="8" fill="${user.color || '#fcd7b6'}" />
+          <rect x="60" y="130" width="60" height="40" rx="20" fill="${shirtColor}" stroke="#222" stroke-width="2"/>
+          ${user.hat ? `<rect x="60" y="30" width="60" height="12" rx="6" fill="#222"/><rect x="75" y="10" width="30" height="15" rx="5" fill="#444"/>` : ""}
+          ${user.glasses ? `<ellipse cx="75" cy="80" rx="8" ry="6" fill="none" stroke="#222" stroke-width="2"/><ellipse cx="105" cy="80" rx="8" ry="6" fill="none" stroke="#222" stroke-width="2"/><rect x="88" y="80" width="4" height="2" fill="#222"/>` : ""}
+          ${user.dress === "dress1" ? `<rect x="60" y="130" width="60" height="40" rx="20" fill="#2196f3" opacity="0.5"/>` : ""}
+          ${user.dress === "dress2" ? `<rect x="60" y="130" width="60" height="40" rx="20" fill="#e91e63" opacity="0.5"/>` : ""}
+          ${user.dress === "dress3" ? `<rect x="60" y="130" width="60" height="40" rx="20" fill="#4caf50" opacity="0.5"/>` : ""}
+        </svg>
+      `;
+    }
+
+    function customize(type) {
+      let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+      if (type === "hat" && user.points >= 5 && !user.hat) {
+        user.points -= 5;
+        user.hat = true;
+      } else if (type === "glasses" && user.points >= 5 && !user.glasses) {
+        user.points -= 5;
+        user.glasses = true;
+      } else if (type === "color" && user.points >= 10 && !user.color) {
+        user.points -= 10;
+        user.color = "#00c6ff";
+      } else {
+        alert("Not enough points or already added!");
+        return;
+      }
+      localStorage.setItem("eduquestUser", JSON.stringify(user));
+      document.getElementById("userPoints").innerText = user.points;
+      showCharacter();
+    }
+    function buyDress(dressType) {
+      let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+      if (user.points >= 15 && user.dress !== dressType) {
+        user.points -= 15;
+        user.dress = dressType;
+        localStorage.setItem("eduquestUser", JSON.stringify(user));
+        document.getElementById("userPoints").innerText = user.points;
+        showCharacter();
+      } else {
+        alert("Not enough points or already bought!");
+      }
+    }
+    function buyShirt(color) {
+      let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+      if (user.points >= 10 && user.shirt !== color) {
+        user.points -= 10;
+        user.shirt = color;
+        localStorage.setItem("eduquestUser", JSON.stringify(user));
+        document.getElementById("userPoints").innerText = user.points;
+        showCharacter();
+      } else {
+        alert("Not enough points or already bought!");
+      }
+    }
+
+    // Chatbot functions
+    function openChatbot() {
+      document.getElementById("chatbot-popup").style.display = "block";
+    }
+    function closeChatbot() {
+      document.getElementById("chatbot-popup").style.display = "none";
+    }
+
+    async function sendChatbot() {
+      const input = document.getElementById("chatbot-input");
+      const messages = document.getElementById("chatbot-messages");
+      const userMsg = input.value.trim();
+      if (!userMsg) return;
+      messages.scrollTop = messages.scrollHeight;
+      messages.innerHTML += `<div style="text-align:right;margin:8px 0;"><span style="background:#00c6ff;color:#000;padding:6px 12px;border-radius:8px;display:inline-block;">${userMsg}</span></div>`;
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+      messages.innerHTML += `<div style="text-align:left;margin:8px 0;"><span style="background:#333;color:#fff;padding:6px 12px;border-radius:8px;display:inline-block;">Thinking...</span></div>`;
+      try {
+        // Example: Call your backend API (replace URL with your own)
+        const response = await fetch("http://localhost:3000/ask", {
+          body: JSON.stringify({ question: userMsg }),
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+        });
+        const data = await response.json();
+        messages.scrollTop = messages.scrollHeight;
+        messages.innerHTML = messages.innerHTML.replace("Thinking...", data.answer || "Sorry, I couldn't find an answer.");
+      } catch {
+        messages.scrollTop = messages.scrollHeight;
+        messages.innerHTML = messages.innerHTML.replace("Thinking...", "Sorry, there was a problem.");
+      }
+    }
+
+    window.addEventListener("load", function() {
+  document.getElementById("loader").style.display = "none";
+});
+  </script>
+</body>
+</html>

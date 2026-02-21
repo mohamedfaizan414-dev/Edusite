@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduQuest Linear Inequality Game</title>
+  <style>
+    body { font-family: "Poppins", sans-serif; background: linear-gradient(135deg,#0a0f1e,#0a0f1e); color:white; text-align:center; padding:40px; }
+    #game-box, #result-box { background: rgba(255,255,255,0.08); border-radius:20px; padding:30px; max-width:650px; margin:auto; box-shadow:0 0 30px rgba(0,198,255,0.3); transition:transform 0.3s ease; }
+    h1 { color:#00c6ff; text-shadow:0 0 20px #00c6ff; }
+    #question { font-size:1.9rem; margin:25px 0; font-weight:600; }
+    #answer { padding:12px; font-size:1.2rem; border-radius:10px; border:none; outline:none; width:60%; margin-top:10px; text-align:center; }
+    button { padding:12px 28px; margin-top:20px; font-size:1.05rem; border:none; border-radius:10px; cursor:pointer; background:#00c6ff; color:black; font-weight:bold; transition:0.3s; }
+    button:hover { background:#0077ff; color:white; }
+    #timer { font-size:1.2rem; margin-top:15px; color:#00ffcc; }
+    #level,#progress { font-size:1rem; margin-top:10px; }
+    .shake { animation: shake 0.4s; }
+    @keyframes shake { 0%{transform:translateX(0);}25%{transform:translateX(-10px);}50%{transform:translateX(10px);}75%{transform:translateX(-10px);}100%{transform:translateX(0);} }
+    #result-box { display:none; animation: fadeIn 0.7s ease forwards; }
+    @keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+    .stat { font-size:1.3rem; margin:15px 0; }
+    /* Chatbot styles */
+    #chatbot-popup { display:none; position:fixed; bottom:80px; right:30px; width:350px; height:420px; background:#222; border-radius:16px; box-shadow:0 0 20px #00c6ff; z-index:999; }
+    #chatbot-popup .header { background:#00c6ff; color:#000; padding:12px 18px; border-radius:16px 16px 0 0; font-weight:bold; display:flex; justify-content:space-between; align-items:center; }
+    #chatbot-popup .header span { cursor:pointer; }
+    #chatbot-messages { height:300px; overflow-y:auto; padding:12px; }
+    #chatbot-input { width:70%; padding:8px; border-radius:8px; border:none; }
+    .chatbot-icon { cursor:pointer; position:fixed; bottom:30px; right:30px; font-size:2rem; color:white; }
+  </style>
+</head>
+<body>
+<h1>🎓 Linear Inequality Challenge 🎮</h1>
+
+<div id="game-box">
+  <div id="level">Level: 1</div>
+  <div id="progress">Question 0 / 10</div>
+  <div id="question">Press Start to Begin!</div>
+  <input type="number" id="answer" placeholder="Type your answer..." disabled><br>
+  <button id="submit" disabled>Submit</button>
+  <div id="timer"></div>
+  <button id="start">Start Game</button>
+</div>
+
+<div id="result-box">
+  <h2>🏆 Game Over!</h2>
+  <div class="stat" id="final-score"></div>
+  <div class="stat" id="final-accuracy"></div>
+  <div class="stat" id="final-level"></div>
+  <button onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<!-- Chatbot Popup -->
+<div id="chatbot-popup" style="display:none;position:fixed;bottom:80px;right:30px;width:350px;height:420px;background:#222;border-radius:16px;box-shadow:0 0 20px #00c6ff;z-index:999;">
+  <div style="background:#00c6ff;color:#000;padding:12px 18px;border-radius:16px 16px 0 0;font-weight:bold;display:flex;justify-content:space-between;align-items:center;">
+    EduQuest Chatbot <span style="cursor:pointer;" onclick="closeChatbot()">✖</span>
+  </div>
+  <div id="chatbot-messages" style="height:300px;overflow-y:auto;padding:12px;"></div>
+  <div style="padding:10px;">
+    <input id="chatbot-input" type="text" placeholder="Ask your question..." style="width:70%;padding:8px;border-radius:8px;border:none;">
+    <button onclick="sendChatbot()" style="background:#00c6ff;color:#000;padding:8px 16px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Send</button>
+  </div>
+</div>
+<div class="chatbot-icon" onclick="openChatbot()">💬</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+const qEl=document.getElementById("question"), aEl=document.getElementById("answer"), sBtn=document.getElementById("submit"), stBtn=document.getElementById("start");
+const lvlEl=document.getElementById("level"), tEl=document.getElementById("timer"), pEl=document.getElementById("progress");
+const gBox=document.getElementById("game-box"), rBox=document.getElementById("result-box");
+const fScore=document.getElementById("final-score"), fAcc=document.getElementById("final-accuracy"), fLvl=document.getElementById("final-level");
+
+let curAns, timer, timeLeft, level=1, score=0, total=0, correct=0;
+
+function generateQuestion(){
+  let a=Math.floor(Math.random()*10)+1, b=Math.floor(Math.random()*20)+1;
+  let op=Math.random()>0.5?'<':'>'; 
+  let x=Math.floor(Math.random()*10)+1;
+  curAns=op=='<'? x-1 : x+1;
+  total++;
+  qEl.textContent=`Solve: ${a}x ${op} ${b}`;
+  pEl.textContent=`Question ${total} / 10`;
+}
+
+function startTimer(){timeLeft=60; tEl.textContent=`⏳ Time left: ${timeLeft}s`;
+timer=setInterval(()=>{timeLeft--; tEl.textContent=`⏳ Time left: ${timeLeft}s`; if(timeLeft<=0){clearInterval(timer); nextQuestion(false);}},1000);}
+
+function nextQuestion(isCorrect){clearInterval(timer);
+if(isCorrect){correct++; score+=10; if(correct%3===0) level++; confetti({particleCount:80,spread:70,origin:{y:0.6}});}
+else{gBox.classList.add("shake"); setTimeout(()=>gBox.classList.remove("shake"),400);}
+if(total>=10) endGame(); else { lvlEl.textContent=`Level: ${level}`; generateQuestion(); aEl.value=""; startTimer(); }
+}
+
+function endGame(){ gBox.style.display="none"; rBox.style.display="block";
+fScore.textContent=`⭐ Score: ${score}`; fAcc.textContent=`🎯 Accuracy: ${((correct/total)*100).toFixed(1)}%`; fLvl.textContent=`📈 Highest Level: ${level}`;
+confetti({particleCount:200,spread:100,origin:{y:0.6}}); }
+
+function restartGame(){score=0;level=1;total=0;correct=0;rBox.style.display="none";gBox.style.display="block";
+stBtn.disabled=true;sBtn.disabled=false;aEl.disabled=false;lvlEl.textContent=`Level: ${level}`;pEl.textContent=`Question 0 / 10`;
+generateQuestion();startTimer();}
+
+sBtn.addEventListener("click",()=>{let val=parseFloat(aEl.value); if(!isNaN(val)&&val===curAns) nextQuestion(true); else nextQuestion(false);});
+stBtn.addEventListener("click",()=>{score=0;level=1;total=0;correct=0;stBtn.disabled=true;sBtn.disabled=false;aEl.disabled=false;generateQuestion();startTimer();});
+// Award points after quiz completion
+let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+user.points = (user.points || 0) + 10; // Add 10 points for winning
+localStorage.setItem("eduquestUser", JSON.stringify(user));
+
+// Chatbot functions
+function openChatbot() {
+  document.getElementById("chatbot-popup").style.display = "block";
+}
+function closeChatbot() {
+  document.getElementById("chatbot-popup").style.display = "none";
+}
+async function sendChatbot() {
+  const input = document.getElementById("chatbot-input");
+  const messages = document.getElementById("chatbot-messages");
+  const userMsg = input.value.trim();
+  if (!userMsg) return;
+  messages.innerHTML += `<div style="text-align:right;margin:8px 0;"><span style="background:#00c6ff;color:#000;padding:6px 12px;border-radius:8px;display:inline-block;">${userMsg}</span></div>`;
+  input.value = "";
+  messages.scrollTop = messages.scrollHeight;
+
+  // Show "Thinking..." while waiting for response
+  messages.innerHTML += `<div style="text-align:left;margin:8px 0;"><span style="background:#333;color:#fff;padding:6px 12px;border-radius:8px;display:inline-block;" id="thinking-msg">Thinking...</span></div>`;
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const response = await fetch("http://localhost:3000/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: userMsg })
+    });
+    const data = await response.json();
+    document.getElementById("thinking-msg").textContent = data.answer || "Sorry, I couldn't find an answer.";
+    messages.scrollTop = messages.scrollHeight;
+  } catch {
+    document.getElementById("thinking-msg").textContent = "Sorry, there was a problem.";
+    messages.scrollTop = messages.scrollHeight;
+  }
+}
+</script>
+</body>
+</html>

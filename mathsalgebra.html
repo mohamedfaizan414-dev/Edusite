@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduQuest Algebra Game</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #0a0f1e,#0a0f1e);
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    #game-box {
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 650px;
+      margin: auto;
+      box-shadow: 0 0 30px rgba(0,198,255,0.3);
+      transition: transform 0.3s ease;
+    }
+    h1 {
+      color: #00c6ff;
+      text-shadow: 0 0 20px #00c6ff;
+    }
+    #question {
+      font-size: 1.9rem;
+      margin: 25px 0;
+      font-weight: 600;
+    }
+    #answer {
+      padding: 12px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      width: 60%;
+      text-align: center;
+      margin-top: 10px;
+    }
+    button {
+      padding: 12px 28px;
+      margin-top: 20px;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #00c6ff;
+      color: black;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0077ff;
+      color: white;
+    }
+    #timer {
+      font-size: 1.2rem;
+      margin-top: 15px;
+      color: #00ffcc;
+    }
+    #level, #progress {
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+    .shake {
+      animation: shake 0.4s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+    /* Result screen */
+    #result-box {
+      display: none;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 30px rgba(0,198,255,0.3);
+      animation: fadeIn 0.7s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .stat {
+      font-size: 1.3rem;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 Algebra Challenge 🎮</h1>
+  
+  <div id="game-box">
+    <div id="level">Level: 1</div>
+    <div id="progress">Question 0 / 10</div>
+    <div id="question">Press Start to Begin!</div>
+    <input type="number" id="answer" placeholder="Type your answer..." disabled>
+    <br>
+    <button id="submit" disabled>Submit</button>
+    <div id="timer"></div>
+    <button id="start">Start Game</button>
+  </div>
+
+  <div id="result-box">
+    <h2>🏆 Game Over!</h2>
+    <div class="stat" id="final-score"></div>
+    <div class="stat" id="final-accuracy"></div>
+    <div class="stat" id="final-level"></div>
+    <button onclick="restartGame()">Play Again 🔄</button>
+  </div>
+
+  <!-- 🎉 Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <script>
+    const questionEl = document.getElementById("question");
+    const answerEl = document.getElementById("answer");
+    const submitBtn = document.getElementById("submit");
+    const startBtn = document.getElementById("start");
+    const levelEl = document.getElementById("level");
+    const timerEl = document.getElementById("timer");
+    const progressEl = document.getElementById("progress");
+    const gameBox = document.getElementById("game-box");
+    const resultBox = document.getElementById("result-box");
+    const finalScoreEl = document.getElementById("final-score");
+    const finalAccuracyEl = document.getElementById("final-accuracy");
+    const finalLevelEl = document.getElementById("final-level");
+
+    let currentAnswer, timer, timeLeft;
+    let level = 1, score = 0, total = 0, correct = 0;
+
+    // Generate formatted question
+    function generateQuestion() {
+      let a, b, question;
+      if (level <= 2) {
+        // Arithmetic
+        a = Math.floor(Math.random() * 50) + 10;
+        b = Math.floor(Math.random() * 50) + 10;
+        let ops = ["+", "−", "×"];
+        let raw = ["+", "-", "*"];
+        let i = Math.floor(Math.random() * ops.length);
+        question = `${a} ${ops[i]} ${b}`;
+        currentAnswer = eval(`${a}${raw[i]}${b}`);
+      } else if (level <= 4) {
+        // Division and squares
+        a = Math.floor(Math.random() * 12) + 2;
+        b = Math.floor(Math.random() * 12) + 2;
+        if (Math.random() > 0.5) {
+          question = `${a*b} ÷ ${a}`;
+          currentAnswer = b;
+        } else {
+          question = `What is ${a}² ?`;
+          currentAnswer = a * a;
+        }
+      } else {
+        // Algebra: solve for x
+        a = Math.floor(Math.random() * 5) + 2;
+        b = Math.floor(Math.random() * 10) + 5;
+        let x = Math.floor(Math.random() * 12) + 1;
+        let c = a * x + b;
+        question = `Find x: ${a}x + ${b} = ${c}`;
+        currentAnswer = x;
+      }
+      total++;
+      progressEl.textContent = `Question ${total} / 10`;
+      questionEl.textContent = question;
+    }
+
+    function startTimer() {
+      timeLeft = 60;
+      timerEl.textContent = `⏳ Time left: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `⏳ Time left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          nextQuestion(false);
+        }
+      }, 1000);
+    }
+
+    function nextQuestion(correctAns) {
+      clearInterval(timer);
+      if (correctAns) {
+        correct++;
+        score += 10;
+        if (correct % 3 === 0) level++;
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+      } else {
+        gameBox.classList.add("shake");
+        setTimeout(() => gameBox.classList.remove("shake"), 400);
+      }
+      if (total >= 10) {
+        endGame();
+      } else {
+        levelEl.textContent = `Level: ${level}`;
+        generateQuestion();
+        answerEl.value = "";
+        startTimer();
+      }
+    }
+
+    function endGame() {
+      gameBox.style.display = "none";
+      resultBox.style.display = "block";
+      finalScoreEl.textContent = `⭐ Score: ${score}`;
+      let accuracy = ((correct / total) * 100).toFixed(1);
+      finalAccuracyEl.textContent = `🎯 Accuracy: ${accuracy}%`;
+      finalLevelEl.textContent = `📈 Highest Level Reached: ${level}`;
+      confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+    }
+
+    function restartGame() {
+      score = 0; level = 1; total = 0; correct = 0;
+      resultBox.style.display = "none";
+      gameBox.style.display = "block";
+      startBtn.disabled = true;
+      submitBtn.disabled = false;
+      answerEl.disabled = false;
+      levelEl.textContent = `Level: ${level}`;
+      progressEl.textContent = `Question 0 / 10`;
+      generateQuestion();
+      startTimer();
+    }
+
+    submitBtn.addEventListener("click", () => {
+      let playerAns = parseFloat(answerEl.value);
+      if (!isNaN(playerAns) && playerAns === currentAnswer) {
+        nextQuestion(true);
+      } else {
+        nextQuestion(false);
+      }
+    });
+
+    startBtn.addEventListener("click", () => {
+      score = 0; level = 1; total = 0; correct = 0;
+      startBtn.disabled = true;
+      submitBtn.disabled = false;
+      answerEl.disabled = false;
+      generateQuestion();
+      startTimer();
+    });
+    // Award points after quiz completion
+let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+user.points = (user.points || 0) + 10; // Add 10 points for winning
+localStorage.setItem("eduquestUser", JSON.stringify(user));
+  </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduQuest - Macbeth Quiz</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #0a0f1e,#0a0f1e);
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    #game-box {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 25px rgba(0,198,255,0.3);
+      transition: transform 0.3s ease;
+    }
+    #question {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    #answer {
+      padding: 10px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      width: 60%;
+      text-align: center;
+    }
+    button {
+      padding: 10px 25px;
+      margin-top: 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #00c6ff;
+      color: black;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover { background: #0077ff; color: white; }
+    #timer {
+      font-size: 1.2rem;
+      margin-top: 15px;
+      color: #00ffcc;
+    }
+    #level { font-size: 1rem; margin-bottom: 15px; }
+    .shake { animation: shake 0.4s; }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 EduQuest - Macbeth Quiz 🎭</h1>
+  <div id="game-box">
+    <div id="level">Question: 1 / 10</div>
+    <div id="question">Press Start to Begin!</div>
+    <input type="text" id="answer" placeholder="Type your answer..." disabled>
+    <br>
+    <button id="submit" disabled>Submit</button>
+    <div id="timer"></div>
+    <button id="start">Start Game</button>
+  </div>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const questionEl = document.getElementById("question");
+    const answerEl = document.getElementById("answer");
+    const submitBtn = document.getElementById("submit");
+    const startBtn = document.getElementById("start");
+    const levelEl = document.getElementById("level");
+    const timerEl = document.getElementById("timer");
+    const gameBox = document.getElementById("game-box");
+
+    let currentAnswer, timer, timeLeft, questionIndex = 0, score = 0;
+    const totalQuestions = 10;
+
+    // Macbeth Quiz Questions
+    const questions = [
+      {q:"Who is the author of Macbeth?", a:"William Shakespeare"},
+      {q:"Where does Macbeth take place?", a:"Scotland"},
+      {q:"Who first prophesies that Macbeth will become king?", a:"The three witches"},
+      {q:"Who kills King Duncan?", a:"Macbeth"},
+      {q:"Who is Banquo?", a:"Macbeth's friend and fellow general"},
+      {q:"Which character is driven mad by guilt?", a:"Lady Macbeth"},
+      {q:"Who kills Macbeth in the end?", a:"Macduff"},
+      {q:"Which is a major theme of Macbeth?", a:"Ambition"},
+      {q:"What vision does Macbeth see before killing Duncan?", a:"A floating dagger"},
+      {q:"Who survives to become king at the end?", a:"Malcolm"}
+    ];
+
+    function generateQuestion() {
+      if (questionIndex >= totalQuestions) {
+        showResult();
+        return;
+      }
+      const qObj = questions[questionIndex];
+      questionEl.textContent = qObj.q;
+      currentAnswer = qObj.a.toLowerCase();
+      levelEl.textContent = `Question: ${questionIndex + 1} / ${totalQuestions}`;
+    }
+
+    function startTimer() {
+      timeLeft = 60;
+      timerEl.textContent = `⏳ Time left: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `⏳ Time left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          checkAnswer(false);
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(correct) {
+      clearInterval(timer);
+      if (correct) {
+        score++;
+        confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+      } else {
+        gameBox.classList.add("shake");
+        setTimeout(() => gameBox.classList.remove("shake"), 400);
+      }
+      questionIndex++;
+      answerEl.value = "";
+      generateQuestion();
+      startTimer();
+    }
+
+    submitBtn.addEventListener("click", () => {
+      let playerAns = answerEl.value.trim().toLowerCase();
+      checkAnswer(playerAns === currentAnswer);
+    });
+
+    startBtn.addEventListener("click", () => {
+      questionIndex = 0;
+      score = 0;
+      startBtn.disabled = true;
+      submitBtn.disabled = false;
+      answerEl.disabled = false;
+      generateQuestion();
+      startTimer();
+    });
+
+    function showResult() {
+      clearInterval(timer);
+      gameBox.innerHTML = `
+        <h2>🎉 Quiz Completed!</h2>
+        <p>Your Score: ${score} / ${totalQuestions}</p>
+        <p>${score / totalQuestions >= 0.8 ? "Excellent! 🏆" : score / totalQuestions >= 0.5 ? "Good Job! 👍" : "Keep Practicing! 💡"}</p>
+        <button onclick="location.reload()">Play Again</button>
+      `;
+    }
+    // Award points after quiz completion
+let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+user.points = (user.points || 0) + 10; // Add 10 points for winning
+localStorage.setItem("eduquestUser", JSON.stringify(user));
+  </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EduQuest - Laws of Motion Quiz</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg,#0a0f1e,#0a0f1e);
+    color: white;
+    text-align: center;
+    padding: 40px;
+  }
+  #game-box, #result-box {
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 650px;
+    margin: auto;
+    box-shadow: 0 0 30px rgba(0,198,255,0.3);
+    transition: transform 0.3s ease;
+  }
+  #question {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  #answer {
+    padding: 10px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    width: 60%;
+    text-align: center;
+  }
+  button {
+    padding: 12px 28px;
+    margin-top: 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #00c6ff;
+    color: black;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #0077ff;
+    color: white;
+  }
+  #timer {
+    font-size: 1.2rem;
+    margin-top: 15px;
+    color: #00ffcc;
+  }
+  #level, #progress {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  .shake {
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+  }
+  #result-box {
+    display: none;
+  }
+  .stat {
+    font-size: 1.3rem;
+    margin: 15px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧪 EduQuest - Laws of Motion Quiz 🚀</h1>
+
+<div id="game-box">
+  <div id="level">Level: 1</div>
+  <div id="progress">Question 0 / 10</div>
+  <div id="question">Press Start to Begin!</div>
+  <input type="text" id="answer" placeholder="Type your answer..." disabled><br>
+  <button id="submit" disabled>Submit</button>
+  <div id="timer"></div>
+  <button id="start">Start Quiz</button>
+</div>
+
+<div id="result-box">
+  <h2>🏆 Quiz Completed!</h2>
+  <div class="stat" id="final-score"></div>
+  <div class="stat" id="final-accuracy"></div>
+  <div class="stat" id="final-level"></div>
+  <button onclick="restartGame()">Play Again 🔄</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+const questionEl = document.getElementById("question");
+const answerEl = document.getElementById("answer");
+const submitBtn = document.getElementById("submit");
+const startBtn = document.getElementById("start");
+const levelEl = document.getElementById("level");
+const timerEl = document.getElementById("timer");
+const progressEl = document.getElementById("progress");
+const gameBox = document.getElementById("game-box");
+const resultBox = document.getElementById("result-box");
+const finalScoreEl = document.getElementById("final-score");
+const finalAccuracyEl = document.getElementById("final-accuracy");
+const finalLevelEl = document.getElementById("final-level");
+
+let currentAnswer = "", timer, timeLeft, level = 1, score = 0, total = 0, correct = 0;
+
+const questions = [
+  {q:"Who formulated the three laws of motion?", a:"Newton"},
+  {q:"Force equals mass times acceleration. What law is this?", a:"Second law"},
+  {q:"An object at rest stays at rest unless acted upon by a force. Which law?", a:"First law"},
+  {q:"Action and reaction are equal and opposite. Which law?", a:"Third law"},
+  {q:"The tendency of an object to resist motion is called?", a:"Inertia"},
+  {q:"The SI unit of force is?", a:"Newton"},
+  {q:"A book resting on a table is an example of?", a:"Balanced forces"},
+  {q:"The acceleration of an object is inversely proportional to its mass. Which law?", a:"Second law"},
+  {q:"If no net force acts on an object, its velocity?", a:"Remains constant"},
+  {q:"What is the product of mass and velocity called?", a:"Momentum"}
+];
+
+function generateQuestion(){
+  if(total >= questions.length) return endQuiz();
+  let qObj = questions[total];
+  questionEl.textContent = qObj.q;
+  currentAnswer = qObj.a.toLowerCase();
+  total++;
+  progressEl.textContent = `Question ${total} / 10`;
+}
+
+function startTimer(){
+  timeLeft = 30;
+  timerEl.textContent = `⏳ Time left: ${timeLeft}s`;
+  timer = setInterval(()=>{
+    timeLeft--;
+    timerEl.textContent = `⏳ Time left: ${timeLeft}s`;
+    if(timeLeft <= 0){ clearInterval(timer); nextQuestion(false); }
+  },1000);
+}
+
+function nextQuestion(isCorrect){
+  clearInterval(timer);
+  if(isCorrect){ 
+    correct++; 
+    score +=10; 
+    if(correct%3===0) level++; 
+    confetti({particleCount:80, spread:70, origin:{y:0.6}}); 
+  } else { 
+    gameBox.classList.add("shake"); 
+    setTimeout(()=>gameBox.classList.remove("shake"),400); 
+  }
+  levelEl.textContent = `Level: ${level}`;
+  answerEl.value = "";
+  generateQuestion();
+  startTimer();
+}
+
+function endQuiz(){
+  gameBox.style.display = "none";
+  resultBox.style.display = "block";
+  finalScoreEl.textContent = `⭐ Score: ${score}`;
+  finalAccuracyEl.textContent = `🎯 Accuracy: ${((correct/total)*100).toFixed(1)}%`;
+  finalLevelEl.textContent = `📈 Highest Level Reached: ${level}`;
+  confetti({particleCount:200, spread:100, origin:{y:0.6}});
+}
+
+function restartGame(){
+  score=0; level=1; total=0; correct=0;
+  resultBox.style.display="none"; gameBox.style.display="block";
+  startBtn.disabled=false; submitBtn.disabled=true; answerEl.disabled=true;
+  progressEl.textContent="Question 0 / 10"; levelEl.textContent="Level: 1";
+  questionEl.textContent="Press Start to Begin!";
+}
+
+submitBtn.addEventListener("click", ()=>{
+  let playerAns = answerEl.value.trim().toLowerCase();
+  if(playerAns === currentAnswer){ nextQuestion(true); } else { nextQuestion(false); }
+});
+
+startBtn.addEventListener("click", ()=>{
+  score=0; level=1; total=0; correct=0;
+  startBtn.disabled=true; submitBtn.disabled=false; answerEl.disabled=false;
+  generateQuestion(); startTimer();
+});
+// Award points after quiz completion
+let user = JSON.parse(localStorage.getItem("eduquestUser")) || { points: 0 };
+user.points = (user.points || 0) + 10; // Add 10 points for winning
+localStorage.setItem("eduquestUser", JSON.stringify(user));
+</script>
+</body>
+</html>
